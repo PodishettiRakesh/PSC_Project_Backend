@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 const SECRET_KEY = process.env.SECRET_KEY;
 
 app.use(cors());
@@ -339,13 +339,23 @@ app.post('/api/enroll', async (req, res) => {
     // Insert into database
     const result = await pool.query(insertQuery, values);
 
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'hemanthram064@msitprogram.net',
+        pass: 'hemanthram143@',
+      },
+    });
+
     // Send acknowledgment email
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: 'hemanthram064@msitprogram.net',
       to: email,
       subject: 'Enrollment Confirmation',
       text: `Dear ${fullName},\n\nYour application has been successfully submitted.\n\nApplication Number: ${applicationNumber}\n\nThank you!`,
     };
+    console.log(email);
+    console.log(process.env.EMAIL_USER)
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
